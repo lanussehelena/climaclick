@@ -1,38 +1,111 @@
 import React from 'react';
-// Importamos o hook!
-import { useCitySearch } from '../hooks/useWeather'; 
+
+import {
+  useCitySearch,
+  useWeather,
+} from '../hooks/useWeather';
+
+import WeatherCard from '../components/common/WeatherCard';
 
 const Home: React.FC = () => {
-  // Aqui chamamos as ferramentas que seu hook oferece
-  const { query, setQuery, suggestions, isSearching, error } = useCitySearch();
+  // Busca de cidades
+  const {
+    query,
+    setQuery,
+    suggestions,
+    isSearching,
+    error,
+  } = useCitySearch();
+
+  // Dados do clima
+  const {
+    weather,
+    city,
+    loadWeather,
+    isLoading,
+  } = useWeather();
 
   return (
     <div style={{ padding: '20px' }}>
       <h1>🌦️ Clima Click</h1>
-      
-      {/* 1. O Campo de Busca */}
+
+      {/* Campo de busca */}
       <input
         type="text"
         placeholder="Digite o nome da cidade..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        style={{ padding: '10px', width: '300px' }}
+        style={{
+          padding: '10px',
+          width: '300px',
+          marginBottom: '20px',
+        }}
       />
 
-      {/* 2. Tratamento de Loading */}
-      {isSearching && <p>Buscando cidades...</p>}
+      {/* Loading da busca */}
+      {isSearching && (
+        <p>Buscando cidades...</p>
+      )}
 
-      {/* 3. Tratamento de Erro */}
-     {error && <p style={{ color: 'red', fontWeight: 'bold' }}>Cidade não encontrada. Tente novamente!</p>}
+      {/* Erro */}
+      {error && (
+        <p
+          style={{
+            color: 'red',
+            fontWeight: 'bold',
+          }}
+        >
+          Cidade não encontrada.
+          Tente novamente!
+        </p>
+      )}
 
-      {/* 4. Exibição das Sugestões Dinâmicas */}
-      <ul>
+      {/* Sugestões */}
+      <ul
+        style={{
+          listStyle: 'none',
+          padding: 0,
+        }}
+      >
         {suggestions.map((cidade) => (
-          <li key={cidade.id}>
-            {cidade.name}, {cidade.admin1} - {cidade.country}
+          <li
+            key={cidade.id}
+            onClick={() =>
+              loadWeather(cidade)
+            }
+            style={{
+              cursor: 'pointer',
+              marginBottom: '10px',
+              padding: '10px',
+              borderRadius: '8px',
+            }}
+          >
+            {cidade.name},
+            {' '}
+            {cidade.admin1}
+            {' - '}
+            {cidade.country}
           </li>
         ))}
       </ul>
+
+      {/* Loading do clima */}
+      {isLoading && (
+        <p>Carregando clima...</p>
+      )}
+
+      {/* Weather Card */}
+      {weather && city && (
+        <div style={{ marginTop: '30px' }}>
+          <WeatherCard
+            city={city.name}
+            temperature={Math.round(
+              weather.current.temperature_2m
+            )}
+            condition="Clima atual"
+          />
+        </div>
+      )}
     </div>
   );
 };
