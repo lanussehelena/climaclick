@@ -3,29 +3,51 @@ import {
   Toolbar,
   Typography,
   Button,
+  Box,
+  Container
 } from "@mui/material";
 
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{backgroundColor: '#1976d2' }}>
+      <Container maxWidth="xl">
       <Toolbar
+      disableGutters
         sx={{
           display: "flex",
+          // No mobile (xs) fica em coluna, no tablet (sm) em diante volta a ser linha
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
+          alignItems: "center",
+          py: { xs: 1.5, sm: 0 }, // Padding vertical no mobile
+          gap: { xs: 1, sm: 0 }  // Espaço entre título e botões no mobile
         }}
       >
-        <Typography variant="h6">
+        <Typography variant="h6"
+        component="div"
+        sx={{ fontWeight: "bold",
+              fontSize: { xs: "1.1rem", sm: "1.25rem" }, // Fonte menor no 320px/375px
+              textAlign: "center"}} >
           Clima Dashboard
         </Typography>
 
-        <div>
+        <Box 
+            sx={{ 
+              display: "flex", 
+              flexWrap: "wrap", // Garante que os botões não estourem se a tela for minúscula
+              justifyContent: "center",
+              gap: { xs: 0.5, sm: 1 } 
+            }}
+          ></Box>
+
           <Button
             color="inherit"
             component={Link}
             to="/"
-          >
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+          
             Home
           </Button>
 
@@ -33,6 +55,7 @@ export default function Navbar() {
             color="inherit"
             component={Link}
             to="/favoritos"
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
           >
             Favoritos
           </Button>
@@ -41,11 +64,13 @@ export default function Navbar() {
             color="inherit"
             component={Link}
             to="/sobre"
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
           >
             Sobre
           </Button>
-        </div>
+
       </Toolbar>
+      </Container>
     </AppBar>
   );
 }
