@@ -1,11 +1,27 @@
 import React from 'react';
 
 import {
-  useCitySearch,
-  useWeather,
-} from '../hooks/useWeather';
+  Container,
+  TextField,
+  Typography,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  CircularProgress,
+  Alert,
+  Paper,
+  InputAdornment,
+  Grid
+} from '@mui/material';
 
+
+import {useCitySearch,useWeather} from '../hooks/useWeather';
 import WeatherCard from '../components/common/WeatherCard';
+
+// Importando as funções da sua API (Certifique-se de adicionar 'export' nelas no api.ts)
+import { weatherCodeLabel, weatherCodeIcon } from '../services/api'; // Importando os helpers que já criamos
 
 const Home: React.FC = () => {
   // Busca de cidades
@@ -26,87 +42,96 @@ const Home: React.FC = () => {
   } = useWeather();
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>🌦️ Clima Click</h1>
+    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 6 }, px: { xs: 2, sm: 3 } }}>
 
-      {/* Campo de busca */}
-      <input
-        type="text"
-        placeholder="Digite o nome da cidade..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{
-          padding: '10px',
-          width: '300px',
-          marginBottom: '20px',
-        }}
-      />
-
-      {/* Loading da busca */}
-      {isSearching && (
-        <p>Buscando cidades...</p>
-      )}
-
-      {/* Erro */}
-      {error && (
-        <p
-          style={{
-            color: 'red',
-            fontWeight: 'bold',
-          }}
-        >
-          Cidade não encontrada.
-          Tente novamente!
-        </p>
-      )}
-
-      {/* Sugestões */}
-      <ul
-        style={{
-          listStyle: 'none',
-          padding: 0,
+      {/* Título com ajuste de fonte para telas pequenas (320px) */}
+      <Typography variant="h3"
+        component="h1"
+        sx={{ 
+          textAlign: 'center', 
+          mb: 4, 
+          fontWeight: 'bold',
+          fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
+          wordBreak: 'break-word'
         }}
       >
-        {suggestions.map((cidade) => (
-          <li
-            key={cidade.id}
-            onClick={() =>
-              loadWeather(cidade)
-            }
-            style={{
-              cursor: 'pointer',
-              marginBottom: '10px',
-              padding: '10px',
-              borderRadius: '8px',
+        🌦️ Clima Click
+      </Typography>
+
+      <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
+
+        {/* Campo de Busca: ocupa 100% no mobile e metade no desktop */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            label="Digite o nome da cidade..."
+            variant="outlined"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            disabled={isLoading}
+            slotProps={{
+              input: {
+                endAdornment: isSearching && (
+                  <InputAdornment position="end">
+                    <CircularProgress size={20} />
+                  </InputAdornment>
+                ),
+              },
             }}
-          >
-            {cidade.name},
-            {' '}
-            {cidade.admin1}
-            {' - '}
-            {cidade.country}
-          </li>
-        ))}
-      </ul>
-
-      {/* Loading do clima */}
-      {isLoading && (
-        <p>Carregando clima...</p>
-      )}
-
-      {/* Weather Card */}
-      {weather && city && (
-        <div style={{ marginTop: '30px' }}>
-          <WeatherCard
-            city={city.name}
-            temperature={Math.round(
-              weather.current.temperature_2m
-            )}
-            condition="Clima atual"
           />
-        </div>
+
+          {/* Loading da busca */}
+          {isSearching && (
+            <Typography sx={{ mt: 1 }}>Buscando cidades...</Typography>
+          )}
+
+          {/* Alerta Erro responsivo */}
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              Cidade não encontrada. Tente novamente!
+          </Alert>
       )}
-    </div>
+
+          {/* Lista de sugestões com scroll interno */}
+          {suggestions.length > 0 && (
+            <Paper elevation={3} sx={{ mt: 1, maxHeight: 250, overflow: 'auto' }}>
+              <List>
+                {suggestions.map((cidade) => (
+                  <ListItem key={cidade.id} disablePadding>
+                    <ListItemButton onClick={() => loadWeather(cidade)}>
+                      <ListItemText 
+                        primary={`${cidade.name}, ${cidade.admin1 || ''}`} 
+                        secondary={cidade.country} 
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+          )}
+        </Grid>
+
+        {/* Exibição do Card: Centralizado e fluido */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          {isLoading ? (
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+              <CircularProgress />
+              <Typography sx={{ mt: 2 }}>Carregando clima...</Typography>
+            </Box>
+          ) : (
+            weather && city && (
+              <Box sx={{ mt: { xs: 2, md: 2 }, width: '100%' }}>
+                <WeatherCard
+                  city={city.name}
+                  temperature={Math.round(weather.current.temperature_2m)}
+                  condition={`${weatherCodeIcon(weather.current.weather_code, !!weather.current.is_day)} ${weatherCodeLabel(weather.current.weather_code)}`}
+                />
+              </Box>
+            )
+          )}
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 
