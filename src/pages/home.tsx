@@ -69,11 +69,34 @@ const Home: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             disabled={isLoading}
+            sx={{
+              // Estilo da cor do texto digitado
+              '& .MuiOutlinedInput-root': {
+                color: 'white', 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Fundo sutil para destaque
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.3)', // Borda visível no escuro
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.5)', // Borda ao passar o mouse
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#90caf9', // Cor de destaque ao clicar (azul claro)
+                },
+              },
+              // Estilo do rótulo (label)
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: '#90caf9',
+              },
+            }}
             slotProps={{
               input: {
                 endAdornment: isSearching && (
                   <InputAdornment position="end">
-                    <CircularProgress size={20} />
+                    <CircularProgress size={20} sx={{ color: '#90caf9' }} />
                   </InputAdornment>
                 ),
               },
