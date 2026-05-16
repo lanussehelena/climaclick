@@ -11,36 +11,43 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    // O AppBar sem Container por fora garante que o azul vá de ponta a ponta
-    <AppBar position="static" sx={{ backgroundColor: '#1976d2', width: '100%' }}>
-      <Container maxWidth="lg"> 
-
-        {/* O Container aqui dentro mantém o texto e botões alinhados ao conteúdo do resto do site */}
+    <AppBar position="static" sx={{backgroundColor: '#1976d2' }}>
+      <Container maxWidth="xl">
       <Toolbar
       disableGutters
         sx={{
           display: "flex",
-          flexDirection:{xs: "column", md: "row"},
-          alignItems: "center",
+          // No mobile (xs) fica em coluna, no tablet (sm) em diante volta a ser linha
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          py: {xs: 1.5, sm: 0},
-          gap: {xs:1, md: 0 }
+          alignItems: "center",
+          py: { xs: 1.5, sm: 0 }, // Padding vertical no mobile
+          gap: { xs: 1, sm: 0 }  // Espaço entre título e botões no mobile
         }}
       >
         <Typography variant="h6"
         component="div"
-        sx={{fontWeight: "bold",
-          fontSize: {xs: "1.1rem" , sm: "1.25rem"}
-        }}>
+        sx={{ fontWeight: "bold",
+              fontSize: { xs: "1.1rem", sm: "1.25rem" }, // Fonte menor no 320px/375px
+              textAlign: "center"}} >
           Clima Dashboard
         </Typography>
 
-        <Box sx={{ display: "flex", gap: {xs: 1, sm: 2} }}>
+        <Box 
+            sx={{ 
+              display: "flex", 
+              flexWrap: "wrap", // Garante que os botões não estourem se a tela for minúscula
+              justifyContent: "center",
+              gap: { xs: 0.5, sm: 1 } 
+            }}
+          ></Box>
+
           <Button
             color="inherit"
             component={Link}
             to="/"
-          >
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+          
             Home
           </Button>
 
@@ -48,6 +55,7 @@ export default function Navbar() {
             color="inherit"
             component={Link}
             to="/favoritos"
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
           >
             Favoritos
           </Button>
@@ -56,10 +64,11 @@ export default function Navbar() {
             color="inherit"
             component={Link}
             to="/sobre"
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
           >
             Sobre
           </Button>
-        </Box>
+
       </Toolbar>
       </Container>
     </AppBar>
